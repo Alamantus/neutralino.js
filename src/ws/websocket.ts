@@ -8,7 +8,14 @@ let extensionMessageQueue = {}
 
 export function init() {
     initAuth();
-    ws = new WebSocket(`ws://${window.location.hostname}:${window.NL_PORT}`);
+    try {
+        // Use localhost if window.location.hostname is empty (i.e. when opening local files)
+        ws = new WebSocket(`ws://${window.location.hostname || 'localhost'}:${window.NL_PORT}`);
+    } catch (e) {
+        console.error(e);
+        // Attempt with local IP address
+        ws = new WebSocket(`ws://127.0.0.1:${window.NL_PORT}`);
+    }
     registerLibraryEvents();
     registerSocketEvents();
 }
